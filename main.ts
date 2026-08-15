@@ -972,6 +972,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Heart, function (sprite, otherSp
 info.onCountdownEnd(function () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
+    sprites.destroyAllSpritesOfKind(SpriteKind.duckBullet)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+    music.play(music.melodyPlayable(music.beamUp), music.PlaybackMode.InBackground)
     game.splash("Level " + level + " complete!", "Score: " + info.score())
     level += 1
     initLevel()
@@ -1190,6 +1193,7 @@ function spawnEvilDucks (num: number) {
         distance = getDistanceBetween2Points(preferredX, preferredY, playerX, playerY)
         sprites.setDataBoolean(coin, "isdead", false)
         while (!(tiles.tileAtLocationEquals(tiles.getTileLocation(pxToTileCoord(preferredX), pxToTileCoord(preferredY)), assets.tile`transparency16`)) || distance < 96) {
+            console.log("help i'm spawning reds")
             playerX = lewis.x
             playerY = lewis.y
             preferredX = roundToNearestInterval(randint(20, 230), 16)
@@ -1615,13 +1619,14 @@ function initLevel () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Food)
     sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
     sprites.destroyAllSpritesOfKind(SpriteKind.Heart)
-    info.startCountdown(30)
+    sprites.destroyAllSpritesOfKind(SpriteKind.duckBullet)
     tiles.setCurrentTilemap(tilemap`level2`)
     generateRandomPlatforms()
     spawnPlayer()
     spawnCoins(20)
     spawnEvilDucks(level)
     game.splash("Level " + level)
+    info.startCountdown(30)
 }
 function forcePlayerSpriteUpdate () {
     if (lastDirection == -1) {
