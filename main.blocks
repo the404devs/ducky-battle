@@ -543,14 +543,14 @@ c b d d d d d 5 5 5 5 5 5 5 b .
 `]</field><data>{"commentRefs":[],"fieldData":{"frames":null}}</data></shadow></value><value name="frameInterval"><shadow type="timePicker" id="RF+A_.R!bTIG#QkWx_(B"><field name="ms">100</field></shadow></value><value name="loop"><shadow type="toggleOnOff" id="78yABAd(K(L:$e6}rqm0"><field name="on">false</field></shadow></value></block></statement><next><block type="device_pause" id="aDZ-nf7Um${rT~42cte|"><value name="pause"><shadow type="timePicker" id="=Q1b]wQQ6,diluo6ud|u"><field name="ms">500</field></shadow></value><next><block type="spritesetsetflag" id="Z2nj#|=;GZibWdMBmSug"><field name="flag">SpriteFlag.GhostThroughSprites</field><value name="sprite"><block type="variables_get" id="9n|%2|H/CNIF/OSH5gqY"><field name="VAR" id="Jeoo0}k*cS/ssGL(W/Ed">lewis</field></block></value><value name="on"><shadow type="toggleOnOff" id="ePx-=wtO-N-~aV9zm=+v"><field name="on">false</field></shadow></value><next><block type="function_call" id="sTr[!BjZ_7qB]m5syBz/"><mutation name="forcePlayerSpriteUpdate" functionid="~%29V{CnqZq!aLnBjdOw"></mutation></block></next></block></next></block></next></block></next></block></statement></block><block type="function_definition" id=":grFEb)w0{Hd2Gt?.Bu)" x="1691" y="1564"><mutation name="showTitleScreen" functionid="WxH!fzSh9`VT@d3R~xyc"></mutation><field name="function_name">showTitleScreen</field><statement name="STACK"><block type="particlesStartScreenAnimation" id="W_tR6!9_%jO,#TV2hD8s"><mutation xmlns="http://www.w3.org/1999/xhtml" _expanded="0" _input_init="true"></mutation><field name="effect">effects.starField</field><value name="duration"><shadow type="timePicker" id="5@iW5Uy9lG^sdue^hagT"><field name="ms">500</field></shadow></value><next><block type="variables_set" id="4;pnCNkC+%cd6`?:xqxX"><field name="VAR" id="B9f2IYqcw%cLK2JEPuEx">version</field><value name="VALUE"><shadow type="math_number" id="UKFnr{`bRC6{2*[rce1}"><field name="NUM">0</field></shadow><block type="spritescreate" id="QxofpXuvkdD|^)$S_Yft"><value name="img"><shadow type="screen_image_picker" id="YIAC#t+(L*oCU5PsBkN{"><field name="img">img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
-. . . . . . . . . 1 1 1 1 1 . . 
-. . . . . . . . 1 1 . . . 1 1 . 
-. . . . . . . . . . . . . 1 1 . 
-1 1 . . . 1 1 . . 1 1 1 1 1 . . 
-1 1 . . . 1 1 . 1 1 . . . . . . 
-1 1 . . . 1 1 . 1 1 . . . . . . 
-. 1 1 . 1 1 . . 1 1 . . . . . . 
-. . 1 1 1 . . . 1 1 1 1 1 1 1 . 
+. . . . . . . . . 1 1 . . . . . 
+. . . . . . . . 1 1 1 . . . . . 
+. . . . . . . . . 1 1 . . . . . 
+1 1 . . . 1 1 . . 1 1 . . . . . 
+1 1 . . . 1 1 . . 1 1 . . . . . 
+1 1 . . . 1 1 . . 1 1 . . . . . 
+. 1 1 . 1 1 . . . 1 1 . . . . . 
+. . 1 1 1 . . . 1 1 1 1 . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
