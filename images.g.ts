@@ -152,25 +152,6 @@ ffffffff..ffff..ffffffff.ffffff......fffffff...ffff.ffffff..fffffff.ffff..ffff..
 . . . b c c c c c c c b . . 
 . . . . b b b b b b b . . . 
 `;
-            case "image9":
-            case "arrow":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . 2 2 . . . . . . . . 
-. . . . . 4 4 2 2 2 . . . . . . 
-. . . . . . . 4 4 2 2 2 . . . . 
-. . . . . . . . . 4 4 2 2 2 . . 
-. . . . 5 . 5 . 5 . 5 4 4 2 2 . 
-. . . . . 5 . 5 . 5 . 4 4 2 2 . 
-. . . . . . . . . 4 4 2 2 2 . . 
-. . . . . . . 4 4 2 2 2 . . . . 
-. . . . . 4 4 2 2 2 . . . . . . 
-. . . . . . 2 2 . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-`;
             case "image7":
             case "hudFrame":return img`
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
@@ -189,6 +170,25 @@ ffffffffffffffffffffffffffffffffffffffffdbdfffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffdbdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdbdffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffdbdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdbdffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffdbdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdbdffffffffffffffffffffffffffffffffffffffff
+`;
+            case "image9":
+            case "arrow":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . 2 2 . . . . . . . 
+. . . . . . 2 2 2 2 . . . . . . 
+. . . . . . 2 4 4 2 . . . . . . 
+. . . . . 2 2 4 4 2 2 . . . . . 
+. . . . . 2 4 5 . 4 2 . . . . . 
+. . . . 2 2 4 . 5 4 2 2 . . . . 
+. . . . 2 4 . 5 . . 4 2 . . . . 
+. . . 2 2 4 . . 5 . 4 2 2 . . . 
+. . . 2 4 . . 5 . . . 4 2 . . . 
+. . . . 4 . . . 5 . . 4 . . . . 
+. . . . . . . 5 . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
 `;
         }
         return null;

@@ -1057,7 +1057,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Heart, function (sprite, otherSp
 })
 function updateHud () {
     redGuyCounter.setText("x" + countNonDeadRedGuys())
-    aimIndicator.rotationDegrees = 0 + getAngleBetweenSprites(computeNearestBadGuyToPlayer(), lewis)
+    aimIndicator.rotationDegrees = 90 + getAngleBetweenSprites(computeNearestBadGuyToPlayer(), lewis)
 }
 info.onCountdownEnd(function () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
@@ -1768,7 +1768,7 @@ function getAngleBetweenSprites (target: Sprite, source: Sprite) {
     if (target != null) {
         return Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI
     }
-    return 0
+    return -90
 }
 function computeNearestBadGuyToPlayer () {
     let list = 0
