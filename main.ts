@@ -1299,7 +1299,7 @@ function spawnEvilDucks (num: number) {
             preferredY = roundToNearestInterval(randint(20, 230), 16)
             distance = getDistanceBetween2Points(preferredX, preferredY, playerX, playerY)
             spawnAttempts += 1
-            if (spawnAttempts >= 0) {
+            if (spawnAttempts >= 100) {
                 break;
             }
         }
@@ -1932,6 +1932,15 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
         sprites.destroy(otherSprite)
     }
 })
+/**
+ * TODO:
+ * 
+ * Reds sometimes do laser beams
+ * 
+ * Hearts too frequent
+ * 
+ * Coin in sparkle anim didn't despawn on level regen
+ */
 let clampedValue = 0
 let spriteOffset = 0
 let distance_to_nearest_bad_guy = 0
