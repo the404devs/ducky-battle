@@ -4,14 +4,15 @@ namespace SpriteKind {
     export const gui = SpriteKind.create()
 }
 /**
- * TODO:
- * 
- * Reds sometimes do laser beams
- * 
- * Hearts too frequent
- * 
- * Coin in sparkle anim didn't despawn on level regen
+ * 74x14 rage meter
  */
+// TODO:
+// 
+// Reds sometimes do laser beams
+// 
+// Hearts too frequent
+// 
+// Coin in sparkle anim didn't despawn on level regen
 function aim (target: Sprite, source: Sprite) {
     x1 = target.x
     y1 = target.y
@@ -178,9 +179,13 @@ function initHud () {
     hudFrame.setFlag(SpriteFlag.RelativeToCamera, true)
     hudFrame.setPosition(80, 112)
     hudFrame.z = 15
-    rageMeter = sprites.create(assets.image`rage0`, SpriteKind.gui)
+    rageIcon = sprites.create(assets.image`rage0`, SpriteKind.gui)
+    rageIcon.setFlag(SpriteFlag.RelativeToCamera, true)
+    rageIcon.setPosition(60, 113)
+    rageIcon.z = 16
+    rageMeter = sprites.create(assets.image`rageMeter0`, SpriteKind.gui)
     rageMeter.setFlag(SpriteFlag.RelativeToCamera, true)
-    rageMeter.setPosition(80, 113)
+    rageMeter.setPosition(100, 112)
     rageMeter.z = 16
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -203,6 +208,7 @@ function grantInvincibility () {
         animation.runImageAnimation(
         lewis,
         [img`
+            d . . . . . . . . . . . . . . d 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -217,8 +223,7 @@ function grantInvincibility () {
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . c . . . . . . . . 
+            d . . . . . . . . . . . . . . d 
             `,img`
             . . . . b 5 b . . . . . . . . . 
             . . . . b 5 b . . . . . . . . . 
@@ -237,6 +242,7 @@ function grantInvincibility () {
             . . b b 5 5 5 d d d d d b c . . 
             . . . b b c c c c c c c c . . . 
             `,img`
+            d . . . . . . . . . . . . . . d 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -251,8 +257,7 @@ function grantInvincibility () {
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . c . . . . . . . . 
+            d . . . . . . . . . . . . . . d 
             `,img`
             . . . . b 5 b . . . . . . . . . 
             . . . . b 5 b . . . . . . . . . 
@@ -906,7 +911,7 @@ function showTitleScreen () {
         `)
 }
 function spawnCoins (num: number) {
-    for (let index2 = 0; index2 < num; index2++) {
+    for (let index = 0; index < num; index++) {
         coin = sprites.create(img`
             . . b b b b . . 
             . b 5 5 5 5 b . 
@@ -1076,6 +1081,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Heart, function (sprite, otherSp
 function updateHud () {
     redGuyCounter.setText("x" + countNonDeadRedGuys())
     aimIndicator.rotationDegrees = 90 + getAngleBetweenSprites(computeNearestBadGuyToPlayer(), lewis)
+    updateRageMeter(killCount)
 }
 info.onCountdownEnd(function () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
@@ -1090,8 +1096,8 @@ info.onCountdownEnd(function () {
 function makeBadGuysShoot () {
     allBadGuys = sprites.allOfKind(SpriteKind.Enemy)
     for (let bad_guy of allBadGuys) {
-        index = allBadGuys.indexOf(bad_guy)
-        if ((game.runtime() + index) % shootRate == 0 && !(sprites.readDataBoolean(bad_guy, "isdead"))) {
+        index3 = allBadGuys.indexOf(bad_guy)
+        if ((game.runtime() + index3) % shootRate == 0 && !(sprites.readDataBoolean(bad_guy, "isdead"))) {
             vector = aim(lewis, bad_guy)
             projectile = sprites.createProjectileFromSprite(img`
                 . . . . . . . . . . . . . . . . 
@@ -1271,9 +1277,9 @@ function countNonDeadRedGuys () {
 }
 function generateRandomPlatforms () {
     x = 1
-    for (let index2 = 0; index2 < 14; index2++) {
+    for (let index = 0; index < 14; index++) {
         y = 1
-        for (let index2 = 0; index2 < 14; index2++) {
+        for (let index = 0; index < 14; index++) {
             if (randint(0, 5) == 0) {
                 tiles.setTileAt(tiles.getTileLocation(x, y), sprites.dungeon.floorDark0)
                 tiles.setWallAt(tiles.getTileLocation(x, y), true)
@@ -1284,7 +1290,7 @@ function generateRandomPlatforms () {
     }
 }
 function spawnEvilDucks (num: number) {
-    for (let index2 = 0; index2 < num; index2++) {
+    for (let index = 0; index < num; index++) {
         coin = sprites.create(img`
             . . . . . . . . . . b 2 b . . . 
             . . . . . . . . . b 2 b . . . . 
@@ -1561,7 +1567,7 @@ function jump () {
     }
 }
 function spawnHearts (num: number) {
-    for (let index2 = 0; index2 < num; index2++) {
+    for (let index = 0; index < num; index++) {
         preferredX = roundToNearestInterval(randint(20, 230), 16)
         preferredY = roundToNearestInterval(randint(20, 230), 16)
         while (!(tiles.tileAtLocationEquals(tiles.getTileLocation(pxToTileCoord(preferredX), pxToTileCoord(preferredY)), assets.tile`transparency16`))) {
@@ -1569,6 +1575,41 @@ function spawnHearts (num: number) {
             preferredY = roundToNearestInterval(randint(20, 230), 16)
         }
         spawnHeartAtPos(preferredX, preferredY)
+    }
+}
+function updateRageMeter (k: number) {
+    if (k == 0) {
+        rageMeter.setImage(assets.image`rageMeter0`)
+    } else if (k == 1) {
+        rageMeter.setImage(assets.image`rageMeter0`)
+    } else if (k == 2) {
+    	
+    } else if (k == 3) {
+    	
+    } else if (k == 4) {
+    	
+    } else if (k == 5) {
+    	
+    } else if (k == 6) {
+    	
+    } else if (k == 7) {
+    	
+    } else if (k == 8) {
+    	
+    } else if (k == 9) {
+    	
+    } else if (k == 10) {
+    	
+    } else if (k == 11) {
+    	
+    } else if (k == 12) {
+    	
+    } else if (k == 13) {
+    	
+    } else if (k == 14) {
+    	
+    } else {
+    	
     }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
@@ -1844,6 +1885,13 @@ function forcePlayerSpriteUpdate () {
         )
     }
 }
+// TODO:
+// 
+// Reds sometimes do laser beams
+// 
+// Hearts too frequent
+// 
+// Coin in sparkle anim didn't despawn on level regen
 function roundToNearestInterval (input2: number, interval: number) {
     spriteOffset = 8
     clampedValue = Math.floor(input2 / interval) * interval
@@ -1975,7 +2023,7 @@ let count = 0
 let lewis_right_anim: Image[] = []
 let nearest_bad_guy: Sprite = null
 let projectile: Sprite = null
-let index = 0
+let index3 = 0
 let allBadGuys: Sprite[] = []
 let lewis_left_anim: Image[] = []
 let preferredY = 0
@@ -1993,6 +2041,7 @@ let versionText: TextSprite = null
 let lastDirection = 0
 let lewis: Sprite = null
 let rageMeter: Sprite = null
+let rageIcon: Sprite = null
 let hudFrame: Sprite = null
 let aimIndicator: Sprite = null
 let aimText: TextSprite = null
@@ -2014,7 +2063,7 @@ let shootRate = 0
 let cooldown = 0
 let level = 0
 let VERSION = 0
-VERSION = 2
+VERSION = 3
 music.stopAllSounds()
 showTitleScreen()
 level = 1
