@@ -4,7 +4,7 @@ namespace SpriteKind {
     export const gui = SpriteKind.create()
 }
 /**
- * 74x14 rage meter
+ * cant shoot during rage bc pause is technically in button press event
  */
 // TODO:
 // 
@@ -181,7 +181,7 @@ function initHud () {
     hudFrame.z = 15
     rageIcon = sprites.create(assets.image`rage0`, SpriteKind.gui)
     rageIcon.setFlag(SpriteFlag.RelativeToCamera, true)
-    rageIcon.setPosition(60, 113)
+    rageIcon.setPosition(70, 113)
     rageIcon.z = 16
     rageMeter = sprites.create(assets.image`rageMeter0`, SpriteKind.gui)
     rageMeter.setFlag(SpriteFlag.RelativeToCamera, true)
@@ -190,7 +190,7 @@ function initHud () {
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (gameStart) {
-        if (killCount >= 15) {
+        if (killCount >= 11 && !(sprites.readDataBoolean(lewis, "rage"))) {
             duckyRage()
         } else {
             playerShoot()
@@ -1259,10 +1259,12 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, ot
     )
     otherSprite.setVelocity(0, 0)
     scene.cameraShake(2, 500)
-    music.play(music.melodyPlayable(music.zapped), music.PlaybackMode.InBackground)
-    info.changeScoreBy(-1)
-    info.changeLifeBy(-1)
-    grantInvincibility()
+    if (!(sprites.readDataBoolean(sprite, "rage"))) {
+        music.play(music.melodyPlayable(music.zapped), music.PlaybackMode.InBackground)
+        info.changeScoreBy(-1)
+        info.changeLifeBy(-1)
+        grantInvincibility()
+    }
     pause(500)
     sprites.destroy(otherSprite)
 })
@@ -1578,38 +1580,93 @@ function spawnHearts (num: number) {
     }
 }
 function updateRageMeter (k: number) {
+    effects.clearParticles(rageMeter)
     if (k == 0) {
-        rageMeter.setImage(assets.image`rageMeter0`)
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim0`,
+        100,
+        true
+        )
     } else if (k == 1) {
-        rageMeter.setImage(assets.image`rageMeter0`)
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim1`,
+        100,
+        true
+        )
     } else if (k == 2) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim2`,
+        100,
+        true
+        )
     } else if (k == 3) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim3`,
+        100,
+        true
+        )
     } else if (k == 4) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim4`,
+        100,
+        true
+        )
     } else if (k == 5) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim5`,
+        100,
+        true
+        )
     } else if (k == 6) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim6`,
+        100,
+        true
+        )
     } else if (k == 7) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim7`,
+        100,
+        true
+        )
     } else if (k == 8) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim8`,
+        100,
+        true
+        )
     } else if (k == 9) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim9`,
+        100,
+        true
+        )
     } else if (k == 10) {
-    	
-    } else if (k == 11) {
-    	
-    } else if (k == 12) {
-    	
-    } else if (k == 13) {
-    	
-    } else if (k == 14) {
-    	
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim10`,
+        100,
+        true
+        )
     } else {
-    	
+        rageMeter.sayText("Press B!", 1000, false)
+        rageMeter.startEffect(effects.fire)
+        animation.runImageAnimation(
+        rageMeter,
+        assets.animation`rageAnim11`,
+        100,
+        true
+        )
     }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
@@ -1821,6 +1878,7 @@ function spawnPlayer () {
     lewis.setPosition(preferredX, preferredY)
     lewis.ay = 294.3
     lewis.z = 10
+    sprites.setDataBoolean(lewis, "rage", false)
     scene.cameraFollowSprite(lewis)
 }
 function getAngleBetweenSprites (target: Sprite, source: Sprite) {
@@ -1849,8 +1907,15 @@ function computeNearestBadGuyToPlayer () {
     return nearest_bad_guy
 }
 function duckyRage () {
-    lewis.sayText("DUCKY RAGE!!!")
+    music.play(music.melodyPlayable(music.siren), music.PlaybackMode.InBackground)
+    sprites.setDataBoolean(lewis, "rage", true)
+    lewis.sayText("DUCKY RAGE!!!", 500, false)
+    lewis.startEffect(effects.fire, 5000)
+    rageMeter.sayText("")
+    scene.cameraShake(2, 5000)
+    pause(5000)
     killCount = 0
+    sprites.setDataBoolean(lewis, "rage", false)
 }
 function initLevel () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
@@ -1866,7 +1931,7 @@ function initLevel () {
     spawnEvilDucks(level)
     game.splash("Level " + level)
     info.startCountdown(30)
-    killCount = 0
+    killCount = 10
 }
 function forcePlayerSpriteUpdate () {
     if (lastDirection == -1) {
@@ -1899,108 +1964,212 @@ function roundToNearestInterval (input2: number, interval: number) {
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (!(sprites.readDataBoolean(otherSprite, "isdead"))) {
-        animation.runImageAnimation(
-        otherSprite,
-        [img`
-            . . . . . . . . . b 2 b . . . . 
-            . . . . . . . . . b 2 b . . . . 
-            . . . . . . b b b b b b . . . . 
-            . . . . . b b 2 2 2 2 2 b . . . 
-            . . . . b b 2 b c 2 2 e 4 c . . 
-            . b b b b 2 2 2 b f e e 4 4 4 b 
-            . b e 2 b 2 2 b c b 4 4 4 4 b . 
-            . . b 2 2 b 2 2 2 4 4 4 4 b . . 
-            . . b e 2 2 b 2 2 2 2 2 2 b . . 
-            . b e b 2 2 2 e 2 2 2 2 2 2 b . 
-            b e e c e 2 2 b 2 2 2 2 2 2 b . 
-            c e e e c c b 2 2 2 2 2 2 2 b . 
-            c b e e e e e 2 2 2 2 2 2 2 b . 
-            . c e e e e e e 2 2 2 2 2 e b . 
-            . . c b e e e e e 2 2 2 b b . . 
-            . . . c c c c c c c c b b . . . 
-            `,img`
-            . . . . . . . . . b 2 b . . . . 
-            . . . . . . . . . b 2 b . . . . 
-            . . . . . . b b b b b b . . . . 
-            . . . . . b b 2 2 2 2 2 b . . . 
-            . . . . b b 2 b c 2 4 e 4 c . . 
-            . b b b 2 2 2 2 b 4 4 e 4 4 4 b 
-            . b e 2 2 4 2 b 4 5 4 4 4 4 b . 
-            . . b 2 2 2 4 d 5 5 4 4 4 b . . 
-            . . b e 2 2 5 5 5 5 4 2 2 b . . 
-            . b e b 2 2 2 5 5 5 5 4 2 2 b . 
-            b e e c e 2 2 5 4 2 4 4 2 2 b . 
-            c e e e c c 4 4 2 2 2 4 4 2 b . 
-            c b e e e 4 4 2 2 2 2 2 2 2 b . 
-            . c e e e e e e 2 2 2 2 2 e b . 
-            . . c b e e e e e 2 2 2 b b . . 
-            . . . c c c c c c c c b b . . . 
-            `,img`
-            . 3 . . . . . . . . . . . 4 . . 
-            . 3 3 . . . . . . . . . 4 4 . . 
-            . 3 d 3 . . 4 4 . . 4 4 d 4 . . 
-            . . 3 5 3 4 5 5 4 4 d d 4 4 . . 
-            . . 3 d 5 d 1 1 d 5 5 d 4 4 . . 
-            . . 4 5 5 1 1 1 1 5 1 1 5 4 . . 
-            . 4 5 5 5 5 1 1 5 1 1 1 d 4 4 . 
-            . 4 d 5 1 1 5 5 5 1 1 1 5 5 4 . 
-            . 4 4 5 1 1 5 5 5 5 5 d 5 5 4 . 
-            . . 4 3 d 5 5 5 d 5 5 d d d 4 . 
-            . 4 5 5 d 5 5 5 d d d 5 5 4 . . 
-            . 4 5 5 d 3 5 d d 3 d 5 5 4 . . 
-            . 4 4 d d 4 d d d 4 3 d d 4 . . 
-            . . 4 5 4 4 4 4 4 4 4 4 4 . . . 
-            . 4 5 4 . . 4 4 4 . . . 4 4 . . 
-            . 4 4 . . . . . . . . . . 4 4 . 
-            `,img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . b b . b b b . . . . . 
-            . . . . b 1 1 b 1 1 1 b . . . . 
-            . . b b 3 1 1 d d 1 d d b b . . 
-            . b 1 1 d d b b b b b 1 1 b . . 
-            . b 1 1 1 b . . . . . b d d b . 
-            . . 3 d d b . . . . . b d 1 1 b 
-            . b 1 d 3 . . . . . . . b 1 1 b 
-            . b 1 1 b . . . . . . b b 1 d b 
-            . b 1 d b . . . . . . b d 3 d b 
-            . b b d d b . . . . b d d d b . 
-            . b d d d d b . b b 3 d d 3 b . 
-            . . b d d 3 3 b d 3 3 b b b . . 
-            . . . b b b d d d d d b . . . . 
-            . . . . . . b b b b b . . . . . 
-            `,img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `],
-        100,
-        false
-        )
-        sprites.setDataBoolean(otherSprite, "isdead", true)
-        otherSprite.unfollow()
-        otherSprite.setFlag(SpriteFlag.Ghost, true)
-        music.play(music.melodyPlayable(music.zapped), music.PlaybackMode.InBackground)
-        scene.cameraShake(4, 500)
-        info.changeScoreBy(-5)
-        info.changeLifeBy(-1)
-        spawnEvilDucks(1)
-        grantInvincibility()
-        pause(500)
-        sprites.destroy(otherSprite)
+        if (sprites.readDataBoolean(sprite, "rage")) {
+            animation.runImageAnimation(
+            otherSprite,
+            [img`
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . b b b b b b . . . . 
+                . . . . . b b 2 2 2 2 2 b . . . 
+                . . . . b b 2 b c 2 2 e 4 c . . 
+                . b b b b 2 2 2 b f e e 4 4 4 b 
+                . b e 2 b 2 2 b c b 4 4 4 4 b . 
+                . . b 2 2 b 2 2 2 4 4 4 4 b . . 
+                . . b e 2 2 b 2 2 2 2 2 2 b . . 
+                . b e b 2 2 2 e 2 2 2 2 2 2 b . 
+                b e e c e 2 2 b 2 2 2 2 2 2 b . 
+                c e e e c c b 2 2 2 2 2 2 2 b . 
+                c b e e e e e 2 2 2 2 2 2 2 b . 
+                . c e e e e e e 2 2 2 2 2 e b . 
+                . . c b e e e e e 2 2 2 b b . . 
+                . . . c c c c c c c c b b . . . 
+                `,img`
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . b b b b b b . . . . 
+                . . . . . b b 2 2 2 2 2 b . . . 
+                . . . . b b 2 b c 2 4 e 4 c . . 
+                . b b b 2 2 2 2 b 4 4 e 4 4 4 b 
+                . b e 2 2 4 2 b 4 5 4 4 4 4 b . 
+                . . b 2 2 2 4 d 5 5 4 4 4 b . . 
+                . . b e 2 2 5 5 5 5 4 2 2 b . . 
+                . b e b 2 2 2 5 5 5 5 4 2 2 b . 
+                b e e c e 2 2 5 4 2 4 4 2 2 b . 
+                c e e e c c 4 4 2 2 2 4 4 2 b . 
+                c b e e e 4 4 2 2 2 2 2 2 2 b . 
+                . c e e e e e e 2 2 2 2 2 e b . 
+                . . c b e e e e e 2 2 2 b b . . 
+                . . . c c c c c c c c b b . . . 
+                `,img`
+                . 3 . . . . . . . . . . . 4 . . 
+                . 3 3 . . . . . . . . . 4 4 . . 
+                . 3 d 3 . . 4 4 . . 4 4 d 4 . . 
+                . . 3 5 3 4 5 5 4 4 d d 4 4 . . 
+                . . 3 d 5 d 1 1 d 5 5 d 4 4 . . 
+                . . 4 5 5 1 1 1 1 5 1 1 5 4 . . 
+                . 4 5 5 5 5 1 1 5 1 1 1 d 4 4 . 
+                . 4 d 5 1 1 5 5 5 1 1 1 5 5 4 . 
+                . 4 4 5 1 1 5 5 5 5 5 d 5 5 4 . 
+                . . 4 3 d 5 5 5 d 5 5 d d d 4 . 
+                . 4 5 5 d 5 5 5 d d d 5 5 4 . . 
+                . 4 5 5 d 3 5 d d 3 d 5 5 4 . . 
+                . 4 4 d d 4 d d d 4 3 d d 4 . . 
+                . . 4 5 4 4 4 4 4 4 4 4 4 . . . 
+                . 4 5 4 . . 4 4 4 . . . 4 4 . . 
+                . 4 4 . . . . . . . . . . 4 4 . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . b b . b b b . . . . . 
+                . . . . b 1 1 b 1 1 1 b . . . . 
+                . . b b 3 1 1 d d 1 d d b b . . 
+                . b 1 1 d d b b b b b 1 1 b . . 
+                . b 1 1 1 b . . . . . b d d b . 
+                . . 3 d d b . . . . . b d 1 1 b 
+                . b 1 d 3 . . . . . . . b 1 1 b 
+                . b 1 1 b . . . . . . b b 1 d b 
+                . b 1 d b . . . . . . b d 3 d b 
+                . b b d d b . . . . b d d d b . 
+                . b d d d d b . b b 3 d d 3 b . 
+                . . b d d 3 3 b d 3 3 b b b . . 
+                . . . b b b d d d d d b . . . . 
+                . . . . . . b b b b b . . . . . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `],
+            100,
+            false
+            )
+            sprites.setDataBoolean(otherSprite, "isdead", true)
+            otherSprite.unfollow()
+            otherSprite.setFlag(SpriteFlag.Ghost, true)
+            otherSprite.setVelocity(0, 0)
+            music.play(music.melodyPlayable(music.bigCrash), music.PlaybackMode.InBackground)
+            info.changeScoreBy(2)
+            killCount += 1
+            pause(500)
+            sprites.destroy(otherSprite)
+            spawnEvilDucks(1)
+        } else {
+            animation.runImageAnimation(
+            otherSprite,
+            [img`
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . b b b b b b . . . . 
+                . . . . . b b 2 2 2 2 2 b . . . 
+                . . . . b b 2 b c 2 2 e 4 c . . 
+                . b b b b 2 2 2 b f e e 4 4 4 b 
+                . b e 2 b 2 2 b c b 4 4 4 4 b . 
+                . . b 2 2 b 2 2 2 4 4 4 4 b . . 
+                . . b e 2 2 b 2 2 2 2 2 2 b . . 
+                . b e b 2 2 2 e 2 2 2 2 2 2 b . 
+                b e e c e 2 2 b 2 2 2 2 2 2 b . 
+                c e e e c c b 2 2 2 2 2 2 2 b . 
+                c b e e e e e 2 2 2 2 2 2 2 b . 
+                . c e e e e e e 2 2 2 2 2 e b . 
+                . . c b e e e e e 2 2 2 b b . . 
+                . . . c c c c c c c c b b . . . 
+                `,img`
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . . . . b 2 b . . . . 
+                . . . . . . b b b b b b . . . . 
+                . . . . . b b 2 2 2 2 2 b . . . 
+                . . . . b b 2 b c 2 4 e 4 c . . 
+                . b b b 2 2 2 2 b 4 4 e 4 4 4 b 
+                . b e 2 2 4 2 b 4 5 4 4 4 4 b . 
+                . . b 2 2 2 4 d 5 5 4 4 4 b . . 
+                . . b e 2 2 5 5 5 5 4 2 2 b . . 
+                . b e b 2 2 2 5 5 5 5 4 2 2 b . 
+                b e e c e 2 2 5 4 2 4 4 2 2 b . 
+                c e e e c c 4 4 2 2 2 4 4 2 b . 
+                c b e e e 4 4 2 2 2 2 2 2 2 b . 
+                . c e e e e e e 2 2 2 2 2 e b . 
+                . . c b e e e e e 2 2 2 b b . . 
+                . . . c c c c c c c c b b . . . 
+                `,img`
+                . 3 . . . . . . . . . . . 4 . . 
+                . 3 3 . . . . . . . . . 4 4 . . 
+                . 3 d 3 . . 4 4 . . 4 4 d 4 . . 
+                . . 3 5 3 4 5 5 4 4 d d 4 4 . . 
+                . . 3 d 5 d 1 1 d 5 5 d 4 4 . . 
+                . . 4 5 5 1 1 1 1 5 1 1 5 4 . . 
+                . 4 5 5 5 5 1 1 5 1 1 1 d 4 4 . 
+                . 4 d 5 1 1 5 5 5 1 1 1 5 5 4 . 
+                . 4 4 5 1 1 5 5 5 5 5 d 5 5 4 . 
+                . . 4 3 d 5 5 5 d 5 5 d d d 4 . 
+                . 4 5 5 d 5 5 5 d d d 5 5 4 . . 
+                . 4 5 5 d 3 5 d d 3 d 5 5 4 . . 
+                . 4 4 d d 4 d d d 4 3 d d 4 . . 
+                . . 4 5 4 4 4 4 4 4 4 4 4 . . . 
+                . 4 5 4 . . 4 4 4 . . . 4 4 . . 
+                . 4 4 . . . . . . . . . . 4 4 . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . b b . b b b . . . . . 
+                . . . . b 1 1 b 1 1 1 b . . . . 
+                . . b b 3 1 1 d d 1 d d b b . . 
+                . b 1 1 d d b b b b b 1 1 b . . 
+                . b 1 1 1 b . . . . . b d d b . 
+                . . 3 d d b . . . . . b d 1 1 b 
+                . b 1 d 3 . . . . . . . b 1 1 b 
+                . b 1 1 b . . . . . . b b 1 d b 
+                . b 1 d b . . . . . . b d 3 d b 
+                . b b d d b . . . . b d d d b . 
+                . b d d d d b . b b 3 d d 3 b . 
+                . . b d d 3 3 b d 3 3 b b b . . 
+                . . . b b b d d d d d b . . . . 
+                . . . . . . b b b b b . . . . . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `],
+            100,
+            false
+            )
+            sprites.setDataBoolean(otherSprite, "isdead", true)
+            otherSprite.unfollow()
+            otherSprite.setFlag(SpriteFlag.Ghost, true)
+            music.play(music.melodyPlayable(music.zapped), music.PlaybackMode.InBackground)
+            scene.cameraShake(4, 500)
+            info.changeScoreBy(-5)
+            info.changeLifeBy(-1)
+            spawnEvilDucks(1)
+            grantInvincibility()
+            pause(500)
+            sprites.destroy(otherSprite)
+        }
     }
 })
 let clampedValue = 0
