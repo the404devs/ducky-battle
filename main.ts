@@ -1962,6 +1962,7 @@ function initLevel () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Projectile)
     sprites.destroyAllSpritesOfKind(SpriteKind.Heart)
     sprites.destroyAllSpritesOfKind(SpriteKind.duckBullet)
+    sprites.destroyAllSpritesOfKind(SpriteKind.effect)
     tiles.setCurrentTilemap(tilemap`level2`)
     generateRandomPlatforms()
     spawnPlayer()
