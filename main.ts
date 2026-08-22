@@ -137,9 +137,12 @@ sprites.onOverlap(SpriteKind.Enemy, SpriteKind.duckBullet, function (sprite, oth
         music.play(music.melodyPlayable(music.bigCrash), music.PlaybackMode.InBackground)
         info.changeScoreBy(2)
         killCount += 1
-        pause(500)
-        sprites.destroy(sprite)
+        pause(400)
+        if (randint(0, 20) == 0) {
+            spawnHeartAtPos(sprite.x, sprite.y)
+        }
         spawnEvilDucks(1)
+        sprites.destroy(sprite)
     }
 })
 function pxToTileCoord (num: number) {
@@ -285,6 +288,7 @@ function grantInvincibility () {
         animation.runImageAnimation(
         lewis,
         [img`
+            d . . . . . . . . . . . . . . d 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -299,8 +303,7 @@ function grantInvincibility () {
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . c . . . . . . . . 
+            d . . . . . . . . . . . . . . d 
             `,img`
             . . . . . . . . . b 5 b . . . . 
             . . . . . . . . . b 5 b . . . . 
@@ -319,6 +322,7 @@ function grantInvincibility () {
             . . c b d d d d d 5 5 5 b b . . 
             . . . c c c c c c c c b b . . . 
             `,img`
+            d . . . . . . . . . . . . . . d 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -333,8 +337,7 @@ function grantInvincibility () {
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . c . . . . . . . . 
+            d . . . . . . . . . . . . . . d 
             `,img`
             . . . . . . . . . b 5 b . . . . 
             . . . . . . . . . b 5 b . . . . 
@@ -1078,7 +1081,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Heart, function (sprite, otherSp
     otherSprite.setFlag(SpriteFlag.GhostThroughSprites, true)
     music.play(music.melodyPlayable(music.powerUp), music.PlaybackMode.InBackground)
     info.changeLifeBy(1)
-    pause(500)
+    pause(300)
     sprites.destroy(otherSprite)
 })
 function updateHud () {
@@ -1279,7 +1282,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, ot
         info.changeLifeBy(-1)
         grantInvincibility()
     }
-    pause(500)
+    pause(400)
     sprites.destroy(otherSprite)
 })
 function countNonDeadRedGuys () {
@@ -1752,11 +1755,11 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSpr
     music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
     info.changeScoreBy(1)
     spawnCoins(1)
-    pause(500)
+    pause(300)
     sprites.destroy(otherSprite)
 })
 function spawnHeartAtPos (x: number, y: number) {
-    coin = sprites.create(img`
+    heartObj = sprites.create(img`
         ....................
         ....................
         ....................
@@ -1778,9 +1781,9 @@ function spawnHeartAtPos (x: number, y: number) {
         ....................
         ....................
         `, SpriteKind.Heart)
-    coin.setPosition(preferredX, preferredY)
+    heartObj.setPosition(x, y)
     animation.runImageAnimation(
-    coin,
+    heartObj,
     [img`
         ....................
         ....................
@@ -2220,6 +2223,7 @@ let col = 0
 let row = 0
 let lewis_right_norm: Image[] = []
 let lewis_left_norm: Image[] = []
+let heartObj: Sprite = null
 let lewis_left_boost: Image[] = []
 let lewis_right_boost: Image[] = []
 let canDoubleJump = false
