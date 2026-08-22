@@ -15,8 +15,9 @@ namespace SpriteKind {
 // 
 // Coin in sparkle anim didn't despawn on level regen
 function aim (target: Sprite, source: Sprite) {
-    x1 = target.x
-    y1 = target.y
+    half_size = 8
+    x1 = Math.max(target.x - half_size, Math.min(source.x, target.x + half_size))
+    y1 = Math.max(target.y - half_size, Math.min(source.y, target.y + half_size))
     x2 = source.x
     y2 = source.y
     distance = getDistanceBetween2Points(x1, y1, x2, y2)
@@ -37,6 +38,8 @@ function getDistanceBetween2Points (x1: number, y1: number, x2: number, y2: numb
 }
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.duckBullet, function (sprite, otherSprite) {
     if (!(sprites.readDataBoolean(sprite, "isdead"))) {
+        otherSprite.setVelocity(0, 0)
+        sprites.destroy(otherSprite)
         animation.runImageAnimation(
         sprite,
         [img`
@@ -129,10 +132,8 @@ sprites.onOverlap(SpriteKind.Enemy, SpriteKind.duckBullet, function (sprite, oth
         false
         )
         sprites.setDataBoolean(sprite, "isdead", true)
-        sprites.destroy(otherSprite)
         sprite.unfollow()
         sprite.setFlag(SpriteFlag.Ghost, true)
-        otherSprite.setVelocity(0, 0)
         music.play(music.melodyPlayable(music.bigCrash), music.PlaybackMode.InBackground)
         info.changeScoreBy(2)
         killCount += 1
@@ -191,7 +192,6 @@ function initHud () {
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (gameStart) {
-        playerShoot()
         if (killCount >= 11 && !(sprites.readDataBoolean(lewis, "rage"))) {
             duckyRage()
         } else {
@@ -438,7 +438,7 @@ function showTitleScreen () {
         `, SpriteKind.gui)
     subtitle = sprites.create(assets.image`subtitle`, SpriteKind.gui)
     subtitle.setPosition(80, 114)
-    versionText.setPosition(10, 8)
+    versionText.setPosition(18, 8)
     title1.scale = 2
     title2.scale = 2.5
     guiDuck1.scale = 2
@@ -788,6 +788,7 @@ function showTitleScreen () {
     pauseUntil(() => controller.A.isPressed())
     effects.starField.endScreenEffect()
     music.play(music.createSoundEffect(WaveShape.Sine, 200, 600, 255, 0, 150, SoundExpressionEffect.None, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Text)
     sprites.destroyAllSpritesOfKind(SpriteKind.gui)
     scene.setBackgroundImage(img`
         ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -2268,13 +2269,14 @@ let y2 = 0
 let x2 = 0
 let y1 = 0
 let x1 = 0
+let half_size = 0
 let gameStart = false
 let rageCooldown = 0
 let shootRate = 0
 let cooldown = 0
 let level = 0
-let VERSION = 0
-VERSION = 3
+let VERSION = ""
+VERSION = "3.0.2"
 music.stopAllSounds()
 showTitleScreen()
 level = 1
