@@ -2280,7 +2280,7 @@ let shootRate = 0
 let cooldown = 0
 let level = 0
 let VERSION = ""
-VERSION = "3.0.2"
+VERSION = "3.0.3"
 music.stopAllSounds()
 showTitleScreen()
 level = 1
