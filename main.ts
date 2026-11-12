@@ -4,9 +4,6 @@ namespace SpriteKind {
     export const gui = SpriteKind.create()
     export const effect = SpriteKind.create()
 }
-/**
- * cant shoot during rage bc pause is technically in button press event
- */
 // TODO:
 // 
 // Reds sometimes do laser beams
@@ -915,6 +912,25 @@ function showTitleScreen () {
         3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
         3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
         `)
+    game.setDialogFrame(img`
+        f 1 1 1 1 1 1 1 1 1 1 1 1 1 f 
+        1 1 d d d d d d d d d d d 1 1 
+        1 d d f f f f f f f f f d d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d f f f f f f f f f f f d 1 
+        1 d d f f f f f f f f f d d 1 
+        1 1 d d d d d d d d d d d 1 1 
+        f 1 1 1 1 1 1 1 1 1 1 1 1 1 f 
+        `)
+    game.setDialogTextColor(1)
+    game.showLongText("Press A to jump.\\nPress A again in midair to do a double jump.\\n \\n Press B to shoot.\\n \\nPress X to pause.\\nPress Y to quit.\\n \\nBlast red guys and collect coins!", DialogLayout.Full)
 }
 function spawnCoins (num: number) {
     for (let index = 0; index < num; index++) {
@@ -928,13 +944,9 @@ function spawnCoins (num: number) {
             . f d d d d f . 
             . . f f f f . . 
             `, SpriteKind.Food)
-        preferredX = roundToNearestInterval(randint(20, 230), 16)
-        preferredY = roundToNearestInterval(randint(20, 230), 16)
-        while (!(tiles.tileAtLocationEquals(tiles.getTileLocation(pxToTileCoord(preferredX), pxToTileCoord(preferredY)), assets.tile`transparency16`))) {
-            preferredX = roundToNearestInterval(randint(20, 230), 16)
-            preferredY = roundToNearestInterval(randint(20, 230), 16)
-        }
-        coin.setPosition(preferredX, preferredY)
+        preferredX = roundToNearestInterval(randint(20, 290), 16)
+        preferredY = roundToNearestInterval(randint(20, 290), 16)
+        tiles.placeOnRandomTile(coin, assets.tile`transparency16`)
         animation.runImageAnimation(
         coin,
         [img`
@@ -1296,9 +1308,9 @@ function countNonDeadRedGuys () {
 }
 function generateRandomPlatforms () {
     x = 1
-    for (let index = 0; index < 14; index++) {
+    for (let index = 0; index < 18; index++) {
         y = 1
-        for (let index = 0; index < 14; index++) {
+        for (let index = 0; index < 18; index++) {
             if (randint(0, 5) == 0) {
                 tiles.setTileAt(tiles.getTileLocation(x, y), sprites.dungeon.floorDark0)
                 tiles.setWallAt(tiles.getTileLocation(x, y), true)
@@ -1310,7 +1322,7 @@ function generateRandomPlatforms () {
 }
 function spawnEvilDucks (num: number) {
     for (let index = 0; index < num; index++) {
-        coin = sprites.create(img`
+        bad_guy = sprites.create(img`
             . . . . . . . . . . b 2 b . . . 
             . . . . . . . . . b 2 b . . . . 
             . . . . . . . . . b c . . . . . 
@@ -1328,18 +1340,20 @@ function spawnEvilDucks (num: number) {
             . . c b e e e e e 2 2 2 b b . . 
             . . . c c c c c c c c b b . . . 
             `, SpriteKind.Enemy)
-        preferredX = roundToNearestInterval(randint(20, 230), 16)
-        preferredY = roundToNearestInterval(randint(20, 230), 16)
         playerX = lewis.x
         playerY = lewis.y
         distance = getDistanceBetween2Points(preferredX, preferredY, playerX, playerY)
-        sprites.setDataBoolean(coin, "isdead", false)
+        sprites.setDataBoolean(bad_guy, "isdead", false)
+        tiles.placeOnRandomTile(bad_guy, assets.tile`transparency16`)
+        preferredX = bad_guy.x
+        preferredY = bad_guy.y
         spawnAttempts = 0
-        while (!(tiles.tileAtLocationEquals(tiles.getTileLocation(pxToTileCoord(preferredX), pxToTileCoord(preferredY)), assets.tile`transparency16`)) || distance < 96) {
+        while (distance < 96) {
             playerX = lewis.x
             playerY = lewis.y
-            preferredX = roundToNearestInterval(randint(20, 230), 16)
-            preferredY = roundToNearestInterval(randint(20, 230), 16)
+            tiles.placeOnRandomTile(bad_guy, assets.tile`transparency16`)
+            preferredX = bad_guy.x
+            preferredY = bad_guy.y
             distance = getDistanceBetween2Points(preferredX, preferredY, playerX, playerY)
             spawnAttempts += 1
             if (spawnAttempts >= 100) {
@@ -1347,10 +1361,10 @@ function spawnEvilDucks (num: number) {
             }
         }
         if (spawnAttempts >= 0) {
-            coin.setPosition(preferredX, preferredY)
-            coin.follow(lewis, 50)
+            bad_guy.setPosition(preferredX, preferredY)
+            bad_guy.follow(lewis, 50)
             animation.runImageAnimation(
-            coin,
+            bad_guy,
             [img`
                 . . . . . . . . . . . b . . . . 
                 . . . . . . . . . . . b . . . . 
@@ -1591,11 +1605,11 @@ function jump () {
 }
 function spawnHearts (num: number) {
     for (let index = 0; index < num; index++) {
-        preferredX = roundToNearestInterval(randint(20, 230), 16)
-        preferredY = roundToNearestInterval(randint(20, 230), 16)
+        preferredX = roundToNearestInterval(randint(20, 290), 16)
+        preferredY = roundToNearestInterval(randint(20, 290), 16)
         while (!(tiles.tileAtLocationEquals(tiles.getTileLocation(pxToTileCoord(preferredX), pxToTileCoord(preferredY)), assets.tile`transparency16`))) {
-            preferredX = roundToNearestInterval(randint(20, 230), 16)
-            preferredY = roundToNearestInterval(randint(20, 230), 16)
+            preferredX = roundToNearestInterval(randint(20, 290), 16)
+            preferredY = roundToNearestInterval(randint(20, 290), 16)
         }
         spawnHeartAtPos(preferredX, preferredY)
     }
@@ -1891,18 +1905,8 @@ function spawnPlayer () {
     100,
     true
     )
-    preferredX = roundToNearestInterval(randint(20, 230), 16)
-    preferredY = roundToNearestInterval(randint(20, 230), 16)
-    row = pxToTileCoord(preferredY)
-    col = pxToTileCoord(preferredX)
-    while (!(tiles.tileAtLocationEquals(tiles.getTileLocation(col, row), assets.tile`transparency16`)) || !(tiles.tileAtLocationIsWall(tiles.getTileLocation(col, row + 1)))) {
-        preferredX = roundToNearestInterval(randint(20, 230), 16)
-        preferredY = roundToNearestInterval(randint(20, 230), 16)
-        row = pxToTileCoord(preferredY)
-        col = pxToTileCoord(preferredX)
-    }
-    lewis.setPosition(preferredX, preferredY)
-    rageBubble.setPosition(preferredX, preferredY)
+    tiles.placeOnRandomTile(lewis, assets.tile`transparency16`)
+    tiles.placeOnRandomTile(rageBubble, assets.tile`transparency16`)
     lewis.ay = 294.3
     rageBubble.ay = 294.3
     lewis.z = 10
@@ -1967,7 +1971,7 @@ function initLevel () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Heart)
     sprites.destroyAllSpritesOfKind(SpriteKind.duckBullet)
     sprites.destroyAllSpritesOfKind(SpriteKind.effect)
-    tiles.setCurrentTilemap(tilemap`level2`)
+    tiles.setCurrentTilemap(tilemap`levelBase`)
     generateRandomPlatforms()
     spawnPlayer()
     spawnCoins(20)
@@ -1994,6 +1998,9 @@ function forcePlayerSpriteUpdate () {
         )
     }
 }
+/**
+ * cant shoot during rage bc pause is technically in button press event
+ */
 // TODO:
 // 
 // Reds sometimes do laser beams
@@ -2219,8 +2226,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 let clampedValue = 0
 let spriteOffset = 0
 let distance_to_nearest_bad_guy = 0
-let col = 0
-let row = 0
 let lewis_right_norm: Image[] = []
 let lewis_left_norm: Image[] = []
 let heartObj: Sprite = null
@@ -2231,6 +2236,7 @@ let jumping = false
 let spawnAttempts = 0
 let playerY = 0
 let playerX = 0
+let bad_guy: Sprite = null
 let y = 0
 let x = 0
 let count = 0
@@ -2280,7 +2286,7 @@ let shootRate = 0
 let cooldown = 0
 let level = 0
 let VERSION = ""
-VERSION = "3.0.4"
+VERSION = "4.0.0"
 music.stopAllSounds()
 showTitleScreen()
 level = 1
