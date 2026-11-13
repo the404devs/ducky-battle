@@ -1348,7 +1348,7 @@ function spawnEvilDucks (num: number) {
         preferredX = bad_guy.x
         preferredY = bad_guy.y
         spawnAttempts = 0
-        while (distance < 96) {
+        while (distance < 160) {
             playerX = lewis.x
             playerY = lewis.y
             tiles.placeOnRandomTile(bad_guy, assets.tile`transparency16`)
@@ -1906,7 +1906,7 @@ function spawnPlayer () {
     true
     )
     tiles.placeOnRandomTile(lewis, assets.tile`transparency16`)
-    tiles.placeOnRandomTile(rageBubble, assets.tile`transparency16`)
+    tiles.placeOnTile(rageBubble, lewis.tilemapLocation())
     lewis.ay = 294.3
     rageBubble.ay = 294.3
     lewis.z = 10
@@ -2286,7 +2286,7 @@ let shootRate = 0
 let cooldown = 0
 let level = 0
 let VERSION = ""
-VERSION = "4.0.0"
+VERSION = "4.0.1"
 music.stopAllSounds()
 showTitleScreen()
 level = 1
